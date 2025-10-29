@@ -18,106 +18,49 @@ yarn add react-reducer-utils
 
 ## Usage
 
-### Setting Up a Reducer
+The process involves creating some boilerplate but I have built utility functions and classes to make it simple and maintainable. But sometimes there is a necessity for a more advanced use.
 
-1. Import the utility functions from the library:
-
-```typescript
-import { createReducer } from 'react-reducer-utils';
-```
-
-2. Define your action types and initial state:
-
-```typescript
-type State = {
-  count: number;
-};
-
-type Action =
-  | { type: 'increment' }
-  | { type: 'decrement' };
-
-const initialState: State = {
-  count: 0,
-};
-```
-
-3. Use `createReducer` to define your reducer:
-
-```typescript
-const reducer = createReducer<State, Action>(initialState, {
-  increment: (state) => ({ ...state, count: state.count + 1 }),
-  decrement: (state) => ({ ...state, count: state.count - 1 }),
-});
-```
-
-4. Use the reducer in your React component:
+### Simple Version
 
 ```tsx
-import React, { useReducer } from 'react';
 
-const Counter: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+//step 1 define your reducer actions
 
-  return (
-    <div>
-      <p>Count: {state.count}</p>
-      <button onClick={() => dispatch({ type: 'increment' })}>Increment</button>
-      <button onClick={() => dispatch({ type: 'decrement' })}>Decrement</button>
-    </div>
-  );
-};
+export enum SimpleReducerActionType {
+    increaseCounter,
+    decreaseCounter,
+}
 
-export default Counter;
+//step 2 define your state object and initial state
+export interface SimpleComponentState {
+    count: number
+}
+
+const initialState = { count: 0 }
+
+//step 3 define your reducer and add logic
+function myReducer(state: SimpleComponentState, action: ReducerAction<SimpleReducerActionType>): SimpleComponentState {
+    switch (action.type) {
+        case SimpleReducerActionType.increaseCounter:
+            return {count: state.count + 1};
+        case SimpleReducerActionType.decreaseCounter:
+            return {count: state.count - 1};
+        default:
+            ///keep the component pure
+            return {...state};
+    }
+}
+
+//step 4 bootstrap the boilerplate and export the components
+const [SimpleStateProvider, useSimpleState] = bootstrapProvider<SimpleComponentState, ReducerAction<SimpleReducerActionType>>(myReducer, initialState);
+ 
+
+//step 5 export the provider and simple state so it can be used outside
+
+export SimpleStateProvider;
+export useSimpleState;
+
 ```
-
-### Using the Simple Provider
-
-The library also includes a `SimpleProvider` component to simplify context management. Here’s how to use it:
-
-1. Import the `SimpleProvider`:
-
-```typescript
-import { SimpleProvider } from 'react-reducer-utils';
-```
-
-2. Wrap your application with the provider:
-
-```tsx
-import React from 'react';
-import { SimpleProvider } from 'react-reducer-utils';
-import App from './App';
-
-const Root: React.FC = () => (
-  <SimpleProvider>
-    <App />
-  </SimpleProvider>
-);
-
-export default Root;
-```
-
-3. Access the context in your components:
-
-```tsx
-import React, { useContext } from 'react';
-import { useSimpleContext } from 'react-reducer-utils';
-
-const MyComponent: React.FC = () => {
-  const { state, dispatch } = useSimpleContext();
-
-  return (
-    <div>
-      <p>State: {JSON.stringify(state)}</p>
-      <button onClick={() => dispatch({ type: 'someAction' })}>Dispatch Action</button>
-    </div>
-  );
-};
-
-export default MyComponent;
-```
-
-### Example Test Case for Simple Provider
 
 Below is an example test case that demonstrates how to use the `bootstrapProvider` function to create a provider and manage state in a React application. This test case is part of the library's test suite:
 
