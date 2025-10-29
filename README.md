@@ -117,6 +117,79 @@ const MyComponent: React.FC = () => {
 export default MyComponent;
 ```
 
+### Example Test Case for Simple Provider
+
+Below is an example test case that demonstrates how to use the `bootstrapProvider` function to create a provider and manage state in a React application. This test case is part of the library's test suite:
+
+```tsx
+import { useEffect } from "react";
+import type { ReducerAction } from "react-reducer-utils";
+import { bootstrapProvider } from "react-reducer-utils";
+import { render } from "@testing-library/react";
+
+describe("Simple provider test Suite", () => {
+
+    it("supports bootstrapping the provider", () => {
+        
+        //we create all the boilerplate and a simple component to test state management.
+        enum ActionType {
+            TEST = "TEST",
+        }
+
+        interface State {
+            value: number;
+        }
+
+        const initialState: State = {
+            value: 0,
+        };
+
+        const testFn = jest.fn();
+
+        function reducer(state: State, action: ReducerAction<ActionType>): State {
+            switch (action.type) {
+                case ActionType.TEST:
+                    testFn();
+                    return { ...state, value: state.value + 1 };
+                default:
+                    return state;
+            }
+        }
+        
+        const { Provider, useContextAccessors } = bootstrapProvider<State, ReducerAction<ActionType>>(reducer, initialState);
+
+        function TestComponent() {
+            const { state, dispatch } = useContextAccessors();
+
+            useEffect(() => {
+                // Just to test initial render
+                dispatch({ type: ActionType.TEST });
+            }, []);
+
+            return (
+                <div>
+                    <p>Value: {state?.value}</p>
+                    <button onClick={() => dispatch({ type: ActionType.TEST })}>Increment</button>
+                </div>
+            );
+        }
+
+        render(<Provider>
+            <TestComponent />
+        </Provider>);
+
+        expect(testFn).toHaveBeenCalledTimes(1);
+    });
+
+});
+```
+
+This example illustrates how to:
+
+1. Define a reducer and initial state.
+2. Use `bootstrapProvider` to create a provider and accessors.
+3. Test state management and actions using React Testing Library.
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
