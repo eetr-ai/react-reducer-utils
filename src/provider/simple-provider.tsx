@@ -1,5 +1,6 @@
 import type { Context, Dispatch, ReactNode } from "react";
-import { useReducer } from "react";
+import { createContext, useReducer } from "react";
+import { useContextNullSafe } from "../utils/reducer-utils";
 
 /**
  * Parameters for SimpleProvider
@@ -30,3 +31,36 @@ export default function SimpleProvider<T, U>(params: SimpleProviderParams<T, U>)
     </params.stateContext.Provider>);
 }
 
+/**
+ * Simple function to bootstrap the provider and the conext accessors.
+ * @template T State type
+ * @template U Action type
+ * @param reducer the reducer for state management.2
+ * @param initialState the initial state for the provider.
+ * @returns an object containing the Provider component and the context accessors.
+ */
+export function bootstrapProvider<T, U>(reducer: (state: T, action: U) => T, initialState: T) {
+    const stateContext = createContext<T | null>(null);
+    const dispatchContext = createContext<Dispatch<U> | null>(null);
+
+    function useContextAccessors() {
+        const state = useContextNullSafe(stateContext);
+        const dispatch = useContextNullSafe(dispatchContext);
+        return { state, dispatch };
+    }
+
+    const Provider = ({ children }: { children: ReactNode }) => {
+        return (
+            <SimpleProvider
+                stateContext={stateContext}
+                dispatchContext={dispatchContext}
+                initialState={initialState}
+                reducer={reducer}
+            >
+                {children}
+            </SimpleProvider>
+        );
+    };
+
+    return { Provider, useContextAccessors };
+}
