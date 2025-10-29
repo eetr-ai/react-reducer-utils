@@ -1,0 +1,35 @@
+{
+  "name": "@eetr/react-reducer-utils",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eetr-ai/react-reducer-utils.git"
+  },
+  "keywords": [],
+  "author": "Juan Lopez Cavallotti <juancavallotti@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/eetr-ai/react-reducer-utils/issues"
+  },
+  "homepage": "https://github.com/eetr-ai/react-reducer-utils#readme",
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^9.38.0",
+    "jest": "^30.2.0",
+    "jsdom": "^27.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
