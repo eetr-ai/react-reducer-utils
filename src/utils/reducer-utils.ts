@@ -1,14 +1,17 @@
 import type { Context } from "react";
 import { useContext } from "react";
+import type { EnumType } from "typescript";
 
-export class ReducerAction<T> {
-    type: T;
-    data?: any;
-
-    constructor(type: T, data?: any) {
-        this.type = type;
-        this.data = data;
-    }
+/**
+ * A type that represents an action for a reducer.
+ * This class encapsulates the action type and optional data payload, and it enforces a typical structure
+ * for actions used in reducer functions.
+ *
+ * @template T The type of the action.
+ */
+export interface ReducerAction<T extends EnumType | string> {
+    type: T,
+    data?: any
 }
 
 export function useContextNullSafe<T>(context: Context<T | null>) : T {
