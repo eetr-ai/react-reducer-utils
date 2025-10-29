@@ -11,6 +11,7 @@ import type { EnumType } from "typescript";
  */
 export interface ReducerAction<T extends EnumType | string> {
     type: T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any
 }
 
