@@ -23,7 +23,11 @@ SOFTWARE.
 */
 import type { Context } from "react";
 import { useContext } from "react";
-import type { EnumType } from "typescript";
+
+/**
+ * To constrain what can be used as action types.
+ */
+type EnumType = Record<string, string | number>;
 
 /**
  * A type that represents an action for a reducer.
@@ -32,7 +36,7 @@ import type { EnumType } from "typescript";
  *
  * @template T The type of the action.
  */
-export interface ReducerAction<T extends EnumType | string> {
+export interface ReducerAction<T extends EnumType | string | number> {
     type: T,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data?: any
