@@ -7,13 +7,13 @@ React Reducer Utils is a utility library designed to simplify the management of 
 To install the library, use npm or yarn:
 
 ```bash
-npm install react-reducer-utils
+npm install @eetr/react-reducer-utils
 ```
 
 or
 
 ```bash
-yarn add react-reducer-utils
+yarn add @eetr/react-reducer-utils
 ```
 
 ## Usage
@@ -23,115 +23,80 @@ The process involves creating some boilerplate but I have built utility function
 ### Simple Version
 
 ```tsx
+import { ReducerAction, bootstrapProvider } from "@eetr/react-reducer-utils";
 
-//step 1 define your reducer actions
-
-export enum SimpleReducerActionType {
-    increaseCounter,
-    decreaseCounter,
+//step 1 define your action types.
+export enum SimpleActionType {
+    INCREMENT = 'INCREMENT',
+    DECREMENT = 'DECREMENT',
+    RESET = 'RESET'
 }
 
-//step 2 define your state object and initial state
-export interface SimpleComponentState {
-    count: number
+//step 2, define your state.
+export interface SimpleState {
+    count: number;
 }
 
-const initialState = { count: 0 }
+//step 3, define your initial state.
+const initialState: SimpleState = {
+    count: 0
+};
 
-//step 3 define your reducer and add logic
-function myReducer(state: SimpleComponentState, action: ReducerAction<SimpleReducerActionType>): SimpleComponentState {
+//step 4, define your reducer.
+function reducer(state: SimpleState = initialState, action: ReducerAction<SimpleActionType>): SimpleState {
     switch (action.type) {
-        case SimpleReducerActionType.increaseCounter:
-            return {count: state.count + 1};
-        case SimpleReducerActionType.decreaseCounter:
-            return {count: state.count - 1};
+        case SimpleActionType.INCREMENT:
+            return { count: state.count + 1 };
+        case SimpleActionType.DECREMENT:
+            return { count: state.count - 1 };
+        case SimpleActionType.RESET:
+            return { count: 0 };
         default:
-            ///keep the component pure
-            return {...state};
+            return state;
     }
 }
 
-//step 4 bootstrap the boilerplate and export the components
-const [SimpleStateProvider, useSimpleState] = bootstrapProvider<SimpleComponentState, ReducerAction<SimpleReducerActionType>>(myReducer, initialState);
- 
+//step 5, bootstrap your provider and export it for further use.
+const {Provider, useContextAccessors} = bootstrapProvider<SimpleState, ReducerAction<SimpleActionType>>(reducer, initialState);
 
-//step 5 export the provider and simple state so it can be used outside
-
-export SimpleStateProvider;
-export useSimpleState;
-
+export { Provider as CounterProvider, useContextAccessors as useCounterState };
 ```
 
-Below is an example test case that demonstrates how to use the `bootstrapProvider` function to create a provider and manage state in a React application. This test case is part of the library's test suite:
+You can then use the provider and contextAccessors in the following way:
 
 ```tsx
-import { useEffect } from "react";
-import type { ReducerAction } from "react-reducer-utils";
-import { bootstrapProvider } from "react-reducer-utils";
-import { render } from "@testing-library/react";
+"use client";
 
-describe("Simple provider test Suite", () => {
+import { SimpleActionType, useCounterState } from "./context";
 
-    it("supports bootstrapping the provider", () => {
-        
-        //we create all the boilerplate and a simple component to test state management.
-        enum ActionType {
-            TEST = "TEST",
-        }
+export default function CounterComponent() {
+    const { state, dispatch } = useCounterState();
 
-        interface State {
-            value: number;
-        }
-
-        const initialState: State = {
-            value: 0,
-        };
-
-        const testFn = jest.fn();
-
-        function reducer(state: State, action: ReducerAction<ActionType>): State {
-            switch (action.type) {
-                case ActionType.TEST:
-                    testFn();
-                    return { ...state, value: state.value + 1 };
-                default:
-                    return state;
-            }
-        }
-        
-        const { Provider, useContextAccessors } = bootstrapProvider<State, ReducerAction<ActionType>>(reducer, initialState);
-
-        function TestComponent() {
-            const { state, dispatch } = useContextAccessors();
-
-            useEffect(() => {
-                // Just to test initial render
-                dispatch({ type: ActionType.TEST });
-            }, []);
-
-            return (
-                <div>
-                    <p>Value: {state?.value}</p>
-                    <button onClick={() => dispatch({ type: ActionType.TEST })}>Increment</button>
-                </div>
-            );
-        }
-
-        render(<Provider>
-            <TestComponent />
-        </Provider>);
-
-        expect(testFn).toHaveBeenCalledTimes(1);
-    });
-
-});
+    return (
+        <div className="flex flex-col w-96 items-center">
+            <div>This is a counter component. Count: {state.count}</div>
+            <button onClick={() => dispatch({ type: SimpleActionType.INCREMENT })}>Increment</button>
+            <button onClick={() => dispatch({ type: SimpleActionType.DECREMENT })}>Decrement</button>
+            <button onClick={() => dispatch({ type: SimpleActionType.RESET })}>Reset</button>
+        </div>
+    );
+}
 ```
 
-This example illustrates how to:
+And for it to work you must wrap your component around its context.
 
-1. Define a reducer and initial state.
-2. Use `bootstrapProvider` to create a provider and accessors.
-3. Test state management and actions using React Testing Library.
+```tsx
+export default function reducersPage() {
+  return (<main>
+    <div className="flex flex-col items-center mt-48">
+        <h1 className="text-2xl font-bold">Reducers Test</h1>
+        <CounterProvider>
+            <CounterComponent />
+        </CounterProvider>
+    </div>
+  </main>);
+```
+
 
 ## Contributing
 

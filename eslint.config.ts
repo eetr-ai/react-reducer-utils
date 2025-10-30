@@ -3,7 +3,6 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
-import { jsx } from "react/jsx-runtime";
 
 export default defineConfig([
   {

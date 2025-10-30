@@ -2,21 +2,29 @@
   "name": "@eetr/react-reducer-utils",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "pack:local": "npm run build && npm pack"
   },
   "repository": {
     "type": "git",

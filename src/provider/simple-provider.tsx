@@ -20,7 +20,7 @@ export interface SimpleProviderParams<T, U> {
  * @param params all the necesssary elements to bootstrap this provider.
  * @returns A component that renders the provider correctly.
  */
-export default function SimpleProvider<T, U>(params: SimpleProviderParams<T, U>) {
+export function SimpleProvider<T, U>(params: SimpleProviderParams<T, U>) {
 
     const [masterState, masterDispatch] = useReducer(params.reducer, params.initialState);
 
